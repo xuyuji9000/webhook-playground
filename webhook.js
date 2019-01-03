@@ -5,21 +5,17 @@ const crypto = require('crypto');
 const exec = require('child_process').exec;
 
 http.createServer(function (req, res) {
-    req.on('data', function(chunk) {
-        let sig = "sha1=" + crypto.createHmac('sha1', secret).update(chunk.toString()).digest('hex');
-        console.log(chunk.toString())
-        console.log(req.headers['x-hub-signature'])
-        console.log(sig)
+    req.on('data', function(json) {
+        let sig = "sha1=" + crypto.createHmac('sha1', secret).update(json.toString()).digest('hex');
 
-        if (req.headers['x-hub-signature'] == sig) {
-            console.log(chunk.toString())
-            // 1. Get the repository name, branch name
-            let repo = '';
-            let branch = '';
-            // 2. Compose path
-            let repo_path = '/srv/' + repo + '-' + branch + '/' + repo + '/';
-            exec('cd ' + repo_path + ' && git reset --hard && git pull');
+        if (!req.headers['x-hub-signature'] == sig) {
+            return false;
         }
+
+        console.log(json.toString())
+        let branch = '';
+        exec(`/srv/pull_from_git.sh ${branch}`);
     });
+
     res.end();
 }).listen(process.env.PORT);
