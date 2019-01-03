@@ -13,10 +13,9 @@ http.createServer(function (req, res) {
             let repo = '';
             let branch = '';
             // 2. Compose path
-            let repo_path = '/srv/' + repo + '-dev/' + repo + '/';
+            let repo_path = '/srv/' + repo + '-' + branch + '/' + repo + '/';
             exec('cd ' + repo_path + ' && git reset --hard && git pull');
         }
     });
-
     res.end();
 }).listen(process.env.PORT);
