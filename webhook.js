@@ -7,6 +7,9 @@ const exec = require('child_process').exec;
 http.createServer(function (req, res) {
     req.on('data', function(chunk) {
         let sig = "sha1=" + crypto.createHmac('sha1', secret).update(chunk.toString()).digest('hex');
+        console.log(chunk.toString())
+        console.log(req.headers['x-hub-signature'])
+        console.log(sig)
 
         if (req.headers['x-hub-signature'] == sig) {
             console.log(chunk.toString())
